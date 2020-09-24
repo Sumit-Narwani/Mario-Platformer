@@ -16,7 +16,8 @@ let config = {
         arcade: {
             gravity:{
                 y: 1000,   // more the value, more the gravitational force (x and y for axis in which we want gravity)
-            }
+            },
+            debug: true,   //used to see the bounding boxes for the game elements(blue-static object,green-denotes velocity,purple-dynamic object)
         }
     },
     
@@ -81,10 +82,20 @@ function create(){
     })
     
     
+    // Create more platforms (static objects)
+    let platforms = this.physics.add.staticGroup();
+    platforms.create(500,350,'ground').setScale(2, 0.5).refreshBody();
+    platforms.create(700,200,'ground').setScale(2, 0.5).refreshBody();
+    platforms.create(100,200,'ground').setScale(2, 0.5).refreshBody();
+    
+    // This statement add ground in the group of platforms only (as ground has the same functionality/working as the platforms)
+    platforms.add(ground);
+    
+    
     // This sets the ground to be static object(body) and does the working same as below three steps can do.
     this.physics.add.existing(ground, true);
     
-    
+               
     // this.physics.add.existing(ground);
     // ground.body.allowGravity = false;
     // round.body.immovable = true;
@@ -94,7 +105,10 @@ function create(){
     this.physics.add.collider(this.player, ground);
     
     // Add a collision detection between the fruits and the ground
-    this.physics.add.collider(fruits,ground);
+    // this.physics.add.collider(fruits,ground);
+    
+    // Add a collision detection between fruits and the platform
+    this.physics.add.collider(fruits,platforms);
     
 }
 
