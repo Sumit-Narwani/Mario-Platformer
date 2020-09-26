@@ -56,6 +56,10 @@ function preload(){
     
     // Full Screen Image
     this.load.spritesheet('fullscreen', 'Assets/fullscreen.png', { frameWidth: 64, frameHeight: 64 });
+    
+    // Audio
+    this.load.audio("numkey","Assets/numkey.mp3");
+    this.load.audio("GameOver","Assets/GameOverAudio1.mp3");
 }
 
 function create(){
@@ -259,6 +263,11 @@ function create(){
             }
 
         }, this);
+    
+   
+//    soundSample.stop();
+//    soundSample.pause();
+//    soundSample.resume();
     }
 
 
@@ -292,13 +301,44 @@ function update(){
     }
     
     //this.game_text1 = this.add.text(40,40,player_config.player_score,font_style);
+    
 }
 
 
 
 function eatFruit(player, fruit){
+    
+ 
     fruit.disableBody(true, true);
     player_config.player_score += 50;
+    
     console.log(player_config.player_score);
     this.scoreText.setText('Score : ' + player_config.player_score);
-}
+    
+    this.soundSample = this.sound.add("numkey");
+    this.soundSample.play();
+   
+    if(player_config.player_score == 400){
+        
+         this.game_text = this.add.text(W/2-50,H-520,"Game Over",{
+            font : "bold 70px Comic Sans MS",
+            align : "center",
+            color : "black",
+            fill : '#000',
+    });
+         this.scoreText = this.add.text(W/2,H-350,'score : 0',{
+            font : "bold 50px Arial",
+            align : "center",
+            color : "black",
+            fill : '#000',
+    });
+        this.scoreText.setText('Score : ' + player_config.player_score);    
+         
+            
+            // Game Over Audio
+            this.GameOverSound = this.sound.add("GameOver");
+            this.GameOverSound.play();
+        
+           
+    
+}}
