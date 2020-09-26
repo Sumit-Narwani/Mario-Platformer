@@ -1,5 +1,5 @@
 let config = {
-    type: Phaser.AUTO,
+    type: Phaser.AUTO,      // for setting  the graphics canvas or WebGL
     
     scale: {
         mode: Phaser.Scale.FIT,
@@ -17,7 +17,7 @@ let config = {
             gravity:{
                 y: 1000,   // more the value, more the gravitational force (x and y for axis in which we want gravity)
             },
-            debug: true,   //used to see the bounding boxes for the game elements(blue-static object,green-denotes velocity,purple-dynamic object)
+            debug: false,   //used to see the bounding boxes for the game elements(blue-static object,green-denotes velocity,purple-dynamic object)
         }
     },
     
@@ -30,6 +30,11 @@ let config = {
 
 };
 
+
+let player_config = {
+    player_speed : 150, 
+    player_jumpspeed : -700,
+}
 
 let game = new Phaser.Game(config);
 
@@ -66,6 +71,39 @@ function create(){
     // this.player.setBounce(1);                              // value 1 means no energy will be lost and it will keep bouncing forever
     this.player.setBounce(0.5);
     
+    
+    
+    // Player animations and player movements.
+    // Left Animation
+    this.anims.create({
+        key : 'left',
+        frames : this.anims.generateFrameNumbers('dude',{start:0,end:3}),
+        frameRate : 10,
+        repeat : -1,
+    });
+    
+    // Center Animation
+      this.anims.create({
+        key : 'center',
+        frames : [{key:'dude', frame:4}],
+        frameRate : 10,
+    });
+    
+    
+    // Right Animation 
+      this.anims.create({
+        key : 'right',
+        frames : this.anims.generateFrameNumbers('dude',{start:5,end:8}),
+        frameRate : 10,
+        repeat : -1,
+    });
+    
+    
+    // Keyboard
+    this.cursors = this.input.keyboard.createCursorKeys();  
+    
+    
+    
     // Add a group of apples = physical objects
     let fruits = this.physics.add.group({
         key : "apple",
@@ -100,12 +138,13 @@ function create(){
     // ground.body.allowGravity = false;
     // round.body.immovable = true;
     
-    
+          
     // Add a collision detection between the player and the ground
-    this.physics.add.collider(this.player, ground);
+    this.physics.add.collider(this.player, platforms);
+    // this.physics.add.collider(this.player, ground);
     
     // Add a collision detection between the fruits and the ground
-    // this.physics.add.collider(fruits,ground);
+    // this.p0h00ysics.add.collider(fruits,ground);
     
     // Add a collision detection between fruits and the platform
     this.physics.add.collider(fruits,platforms);
@@ -114,4 +153,31 @@ function create(){
 
 
 
-function update(){}
+function update(){
+    
+    if(this.cursors.left.isDown){
+        // this.player.setVelocity(-150);
+         this.player.setVelocityX(-player_config.player_speed);
+        
+        // Left Animation called when left cursor(keyboard button) is pressed.
+         this.player.anims.play('left', true);
+    }
+    else if(this.cursors.right.isDown){
+        this.player.setVelocityX(player_config.player_speed);
+        
+        // Right Animation called when right cursor(keyboard button) is pressed.
+        this.player.anims.play('right', true);
+    }
+    else{
+        this.player.setVelocityX(0);
+        
+        // Rest of the time when no key is pressed, it remains to the center position.
+        this.player.anims.play('center', true);
+    }
+    
+    
+    // Add jumping ability, stop the player when in air
+    if(this.cursors.up.isDown && this.player.body.touching.down){
+        this.player.setVelocityY(player_config.player_jumpspeed);
+    }
+}
