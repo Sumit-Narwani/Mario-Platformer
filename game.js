@@ -149,6 +149,9 @@ function create(){
     // Add a collision detection between fruits and the platform
     this.physics.add.collider(fruits,platforms);
     
+    
+    // Overlapping between the player and fruits
+    this.physics.add.overlap(this.player, fruits, eatFruit, null, this);
 }
 
 
@@ -180,4 +183,10 @@ function update(){
     if(this.cursors.up.isDown && this.player.body.touching.down){
         this.player.setVelocityY(player_config.player_jumpspeed);
     }
+}
+
+
+function eatFruit(player, fruit){
+    fruit.disableBody(true, true);
+    
 }
