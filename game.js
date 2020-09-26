@@ -34,6 +34,7 @@ let config = {
 let player_config = {
     player_speed : 150, 
     player_jumpspeed : -700,
+    player_score : 0,
 }
 
 let game = new Phaser.Game(config);
@@ -42,7 +43,11 @@ function preload(){
     this.load.image("ground", "Assets/topground.png");
     this.load.image("sky", "Assets/background.png");
     this.load.image("apple", "Assets/apple.png");
-    this.load.spritesheet("dude", "Assets/dude.png", {frameWidth:32, frameHeight:48})
+    
+    // Loaded using spritesheet because it contains multiple images of width 32px each and height 48px.
+    this.load.spritesheet("dude", "Assets/dude.png", {frameWidth:32, frameHeight:48});
+    
+    this.load.image("ray","Assets/ray.png");
     
 }
 
@@ -61,11 +66,38 @@ function create(){
     background.setOrigin(0,0);
     background.displayWidth = W;
     background.displayHeight = H;
-    background.depth = -1;
+    background.depth = -2;
     
+    // Create rays on the top of our background
+    let rays = [];
     
+    for(let i=-10; i<=10;i++){
+        let ray = this.add.sprite(W/2, H-128, 'ray');  
+        ray.displayHeight = 1.2*H;
+        ray.setOrigin(0.5,1);
+        ray.alpha = 0.2;
+        ray.angle = i*20;
+        ray.depth = -1;
+        rays.push(ray);
+    }
+    console.log(rays);
+    
+    // Rotating these rays using tween
+    this.tweens.add({
+        targets : rays,
+        props : {
+            angle :{
+                value : "+=20",
+            }
+        },
+        duration : 8000,
+        repeat : -1,
+    })
+    
+    // Here the fourth parameter given is the index for the image in spritesheet which we want here.
     this.player = this.physics.add.sprite(100, 100, "dude", 4);
     console.log(this.player);
+    
     
     // Set the bounce value for the player (elastic collision)
     // this.player.setBounce(1);                              // value 1 means no energy will be lost and it will keep bouncing forever
@@ -167,6 +199,15 @@ function create(){
     this.cameras.main.startFollow(this.player,true,true);   
     this.cameras.main.setZoom(1.5);
 
+    
+    font_style = {
+        font : "bold 20px Arial",
+        align : "center",
+        color : "brown",
+    }
+    this.game_text = this.add.text(10,10,"Welcome to Mini Mario",font_style);
+//    this.game_text1 = this.add.text(40,40,player_config.player_score,font_style);
+
 }
 
 
@@ -198,11 +239,14 @@ function update(){
     if(this.cursors.up.isDown && this.player.body.touching.down){
         this.player.setVelocityY(player_config.player_jumpspeed);
     }
+    
+    //this.game_text1 = this.add.text(40,40,player_config.player_score,font_style);
 }
 
 
 
 function eatFruit(player, fruit){
     fruit.disableBody(true, true);
-    
+    player_config.player_score += 50;
+    console.log(player_config.player_score);
 }
