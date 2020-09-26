@@ -69,7 +69,11 @@ function create(){
     
     // Set the bounce value for the player (elastic collision)
     // this.player.setBounce(1);                              // value 1 means no energy will be lost and it will keep bouncing forever
-    this.player.setBounce(0.5);
+    this.player.setBounce(0.3);
+    
+    
+    // dont allow player to move out of the game world
+    this.player.setCollideWorldBounds(true);
     
     
     
@@ -152,6 +156,17 @@ function create(){
     
     // Overlapping between the player and fruits
     this.physics.add.overlap(this.player, fruits, eatFruit, null, this);
+    
+    
+    // Create cameras
+    this.cameras.main.setBounds(0,0,W,H);
+    
+    // World is the total area in our game, that can be bigger than the screen size
+    this.physics.world.setBounds(0,0,W,H);
+    
+    this.cameras.main.startFollow(this.player,true,true);   
+    this.cameras.main.setZoom(1.5);
+
 }
 
 
@@ -184,6 +199,7 @@ function update(){
         this.player.setVelocityY(player_config.player_jumpspeed);
     }
 }
+
 
 
 function eatFruit(player, fruit){
