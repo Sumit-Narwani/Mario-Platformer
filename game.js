@@ -1,8 +1,13 @@
 let config = {
-    type: Phaser.AUTO,      // for setting  the graphics canvas or WebGL
+    type: Phaser.AUTO,  // for setting  the graphics canvas or WebGL
+    
+    
     
     scale: {
         mode: Phaser.Scale.FIT,
+        
+        // For centering of the canvas/game world
+        autoCenter: Phaser.Scale.CENTER_BOTH,
         width: 800,
         height: 600,
         
@@ -49,6 +54,8 @@ function preload(){
     
     this.load.image("ray","Assets/ray.png");
     
+    // Full Screen Image
+    this.load.spritesheet('fullscreen', 'Assets/fullscreen.png', { frameWidth: 64, frameHeight: 64 });
 }
 
 function create(){
@@ -95,7 +102,7 @@ function create(){
     })
     
     // Here the fourth parameter given is the index for the image in spritesheet which we want here.
-    this.player = this.physics.add.sprite(100, 100, "dude", 4);
+    this.player = this.physics.add.sprite(70, 100, "dude", 4);
     console.log(this.player);
     
     
@@ -204,11 +211,55 @@ function create(){
         font : "bold 20px Arial",
         align : "center",
         color : "brown",
+        fill : '#000',
     }
+    
+    // Displaying Score and Other Text
     this.game_text = this.add.text(10,10,"Welcome to Mini Mario",font_style);
-//    this.game_text1 = this.add.text(40,40,player_config.player_score,font_style);
+    this.scoreText = this.add.text(40,40,'score : 0',font_style);
 
-}
+    
+    // Button created to switch to full screen mode and then exit from fullscreen.
+    var button = this.add.image(300, 16, 'fullscreen', 0).setOrigin(1, 0).setInteractive();
+    button.setScale(0.5,0.5);
+        
+        
+        button.on('pointerup', function () {
+
+            if (this.scale.isFullscreen)
+            {
+                button.setFrame(0);
+
+                this.scale.stopFullscreen();
+            }
+            else
+            {
+                button.setFrame(1);
+
+                this.scale.startFullscreen();
+            }
+
+        }, this);
+
+        
+        // Keyboard input for entering and exiting from the full screen.
+        var FKey = this.input.keyboard.addKey('F');
+
+        FKey.on('down', function () {
+
+            if (this.scale.isFullscreen)
+            {
+                button.setFrame(0);             // set frame for identifying the image to display from the fullscreen sprite
+                this.scale.stopFullscreen();
+            }
+            else
+            {
+                button.setFrame(1);
+                this.scale.startFullscreen();
+            }
+
+        }, this);
+    }
 
 
 
@@ -249,4 +300,5 @@ function eatFruit(player, fruit){
     fruit.disableBody(true, true);
     player_config.player_score += 50;
     console.log(player_config.player_score);
+    this.scoreText.setText('Score : ' + player_config.player_score);
 }
