@@ -1,3 +1,9 @@
+/* Created 
+    Sumit Narwani -  26/09/20
+    */
+
+
+
 let config = {
     type: Phaser.AUTO,  // for setting  the graphics canvas or WebGL
     
